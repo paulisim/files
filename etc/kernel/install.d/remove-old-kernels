@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+#
+# Keep most 3 recent kernels and remove the rest.
+#
+
+__SYSTEM_ID=$(systemd-machine-id-setup --print)
+
+for __KERNEL in $(\ls -1t /lib/modules | awk 'NR > 3'); do
+	echo "Removing ${__KERNEL} .."
+	rm --recursive "/boot/${__SYSTEM_ID}/${__KERNEL}"
+	rm --recursive "/boot/loader/entries/${__SYSTEM_ID}-${__KERNEL}.conf"
+	rm --recursive "/lib/modules/${__KERNEL}"
+done
+
+bootctl list --no-pager
